@@ -3,14 +3,30 @@ import { useState, useRef } from 'react'
 
 
 const Grid = ({allDaysOfMonth}) => {
-  const timeIn = useRef();
-  const timeOut = useRef();
+  const [timeIn, setTimeIn] = useState({})
+
 
   const calculateTime = (cell) =>{
    
   }
-  const startTime = document.getElementsByClassName('timeIn')
-  const endTime = document.getElementsByClassName('timeOut')
+
+  const calculateTotal = (e, cell) =>{
+    console.log(e,cell)
+    setTimeIn((state) => {
+      return {
+        ...state,
+        [cell]:e.target.value
+      };
+    });
+  }
+
+  console.log(timeIn)
+  const isWeekend =(day)=>{
+    if (day.includes("Sat") || day.includes("Sun")){
+      return true
+    }
+  }
+
 
 
   return (
@@ -27,12 +43,13 @@ const Grid = ({allDaysOfMonth}) => {
       </thead>
       <tbody>
         {allDaysOfMonth && allDaysOfMonth.map((day, cell) => {
+          
           return (
             <tr key={cell}>
               <th scope="row">{day}</th>
-              <td ref={timeIn} className='timeIn' style={{background: day.includes("Sat") || day.includes("Sun") ? 'grey' : 'white' }}>{day.includes("Sat") || day.includes("Sun") ? "" : "3:30" }</td>
-              <td ref={timeOut} className='timeOut'style={{background: day.includes("Sat") || day.includes("Sun") ? 'grey' : 'white' }}>{day.includes("Sat") || day.includes("Sun") ? "" : "9:36" }</td>
-              <td>{cell}</td>
+              <td className='timeIn' style={{background: isWeekend(day) ? 'grey' : 'white' }}>{ !isWeekend(day) && <input onChange={(e)=> calculateTotal(e, cell)} className="form-control" type="text" placeholder="Time In"/>}</td>
+              <td  className='timeOut'style={{background: isWeekend(day) ? 'grey' : 'white' }}>{ !isWeekend(day) && <input className="form-control" type="text" placeholder="Time Out"/>}</td>
+              <td></td>
               <td></td>
             </tr>
           )
