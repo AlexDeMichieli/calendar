@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Grid from './components/Grid';
-
+import moment from 'moment'
+import Moment from 'react-moment';
 
 function App() {
   const [month, setMonth] = useState(new Date().getMonth());
@@ -8,7 +9,6 @@ function App() {
   const [allDaysOfMonth, setAllDaysOfMonth]= useState([])
   
 useEffect(() => {
-  
   const daysOfMonth = () => {
     let date = new Date(year, month, 1);
     let days = [];
