@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Grid from './components/Grid';
 import moment from 'moment'
-import Moment from 'react-moment';
 
 function App() {
   const [month, setMonth] = useState(new Date().getMonth());
@@ -13,7 +12,8 @@ useEffect(() => {
     let date = new Date(year, month, 1);
     let days = [];
     while (date.getMonth() === parseInt(month)) {
-      let day = new Date(date).toString()
+      console.log(moment(date).format('L'))
+      let day = moment(date).format('L')
       let splitDate = day.split("00")[0]
       days.push(splitDate);
       date.setDate(date.getDate() + 1);

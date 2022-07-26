@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useRef } from 'react'
+import moment from 'moment'
 
 
 const Grid = ({allDaysOfMonth}) => {
@@ -15,7 +16,7 @@ const Grid = ({allDaysOfMonth}) => {
     setTimeIn((state) => {
       return {
         ...state,
-        [cell]:day+e.target.value
+        [cell]:`${day} ${e.target.value}`
       };
     });
   }
@@ -26,7 +27,7 @@ const Grid = ({allDaysOfMonth}) => {
     setTimeOut((state) => {
       return {
         ...state,
-        [cell]:day+e.target.value
+        [cell]:`${day} ${e.target.value}`
       };
     });
   }
@@ -37,7 +38,8 @@ const Grid = ({allDaysOfMonth}) => {
 
 
   const isWeekend =(day)=>{
-    if (day.includes("Sat") || day.includes("Sun")){
+    let currentDay = moment(day).format('LLLL')
+    if (currentDay.includes("Sat") ||currentDay.includes("Sun")){
       return true
     }
   }
@@ -58,13 +60,18 @@ const Grid = ({allDaysOfMonth}) => {
       </thead>
       <tbody>
         {allDaysOfMonth && allDaysOfMonth.map((day, cell) => {
-          
+        let date1 = moment(timeIn[cell]);
+        let date2 = moment(timeOut[cell]);
+        let diff = date2.diff(date1);
+        let computerHours = moment.utc(diff).format('HH:mm')
+
           return (
+ 
             <tr key={cell}>
               <th scope="row">{day}</th>
               <td className='timeIn' style={{background: isWeekend(day) ? 'grey' : 'white' }}>{ !isWeekend(day) && <input onChange={(e)=> enterTimeIn(e, cell, day)} className="form-control" type="text" placeholder="Time In"/>}</td>
               <td  className='timeOut'style={{background: isWeekend(day) ? 'grey' : 'white' }}>{ !isWeekend(day) && <input onChange={(e)=> enterTimeOut(e, cell, day)} className="form-control" type="text" placeholder="Time Out"/>}</td>
-              <td>{parseInt(timeIn[cell])+ parseInt(timeOut[cell])}</td>
+              <td>{computerHours}</td>
               <td className='notes' style={{background: isWeekend(day) ? 'grey' : 'white' }}>{ !isWeekend(day) && <input onChange={(e)=> enterNotes(e, cell)} className="form-control" type="text" placeholder="Notes"/>}</td>
             </tr>
           )
