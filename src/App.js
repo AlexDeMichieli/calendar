@@ -12,7 +12,6 @@ useEffect(() => {
     let date = new Date(year, month, 1);
     let days = [];
     while (date.getMonth() === parseInt(month)) {
-      console.log(moment(date).format('L'))
       let day = moment(date).format('L')
       let splitDate = day.split("00")[0]
       days.push(splitDate);
