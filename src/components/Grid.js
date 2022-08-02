@@ -3,38 +3,38 @@ import { useState } from 'react'
 import moment from 'moment'
 
 
-const Grid = ({ allDaysOfMonth }) => {
+const Grid = ({ allDaysOfMonth, prefillTime }) => {
+  console.log(prefillTime)
+
   const [timeIn, setTimeIn] = useState({})
   const [timeOut, setTimeOut] = useState({})
-  const [hours, setHours] = useState([])
+
+  const computeHours = (timeIn, timeOut, cell) =>{
+    let start = moment(timeIn[cell]);
+    let end = moment(timeOut[cell]);
+    let diff = end.diff(start);
+    let computedHours = moment.utc(diff).format('H.mm')
+
+    return computedHours
+  }
 
   const calculateTime = () => {
+    const total = []
+    let sum = 0
 
-    Object.keys(timeIn).forEach( function (key) { 
-      //console.log(timeIn[key]+':'+timeOut[key]); 
-      let diff = moment(timeOut[key]).diff(moment(timeIn[key]));
-      let computedHours = moment.utc(diff).format('H.mm')
-      console.log("key", key, computedHours)
-    } );
+    Object.keys(timeIn).forEach(function (key) {
 
-    let total = []
+      let sumOfRowHours = computeHours(timeIn, timeOut, key)
+      total.push(parseFloat(sumOfRowHours))
 
-    // for (let i = 0; i < cellHours.length; i++) {
-    //   let formattedHours = parseInt(cellHours[i].innerHTML)
-    //   // if (isNaN(formattedHours)) {
-    //   //   formattedHours = 0
-    //   // }
-    //   total.push(formattedHours)
-    // }
-    // const sum = total.reduce((accumulator, value) => {
-    //   if (isNaN(value)) {
-    //     value = 0
-    //   }
-    //   console.log(value)
-    //   return accumulator + value;
-    // }, 0);
+    });
 
-    // return sum
+    for (let i = 0; i < total.length; i++) {
+      console.log(total[i])
+      sum += total[i]
+    }
+
+    return sum
   }
 
   const enterTimeIn = (e, cell, day) => {
@@ -67,9 +67,6 @@ const Grid = ({ allDaysOfMonth }) => {
       return true
     }
   }
-
-
-console.log(timeIn, timeOut)
   return (
     <div className='container'>
       <table className="table">
@@ -84,25 +81,22 @@ console.log(timeIn, timeOut)
         </thead>
         <tbody>
           {allDaysOfMonth && allDaysOfMonth.map((day, cell) => {
-            let date1 = moment(timeIn[cell]);
-            let date2 = moment(timeOut[cell]);
-            let diff = date2.diff(date1);
-            let computedHours = moment.utc(diff).format('H.mm')
-  
+       
             return (
-
               <tr key={cell}>
                 <th scope="row">{day}</th>
-                <td className='timeIn' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && <input onChange={(e) => enterTimeIn(e, cell, day)} className="form-control" type="text" placeholder="Time In" />}</td>
+                <td className='timeIn' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && <input onChange={(e) => enterTimeIn(e, cell, day)} defaultValue={prefillTime.timeIn} className="form-control" type="text" placeholder="Time In" />}</td>
+
                 <td className='timeOut' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && <input onChange={(e) => enterTimeOut(e, cell, day)} className="form-control" type="text" placeholder="Time Out" />}</td>
-                <td className='hours' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && computedHours}</td>
+
+                <td className='hours' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && computeHours(timeIn, timeOut, cell)}</td>
                 <td className='notes' style={{ background: isWeekend(day) ? 'grey' : 'white' }}>{!isWeekend(day) && <input onChange={(e) => enterNotes(e, cell)} className="form-control" type="text" placeholder="Notes" />}</td>
               </tr>
             )
           })}
         </tbody>
       </table>
-      <p>{calculateTime()}</p>
+      <h4 className='text-center'>Sum: {calculateTime()}</h4>
     </div>
   )
 }
