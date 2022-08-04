@@ -31,6 +31,7 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
     let start = moment(timeIn[cell]);
     let end = moment(timeOut[cell]);
     let diff = end.diff(start);
+    console.log(diff)
     let computedHours = moment.utc(diff).format("H.mm");
 
     return computedHours;
@@ -102,7 +103,7 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
                       <input
                         className="timeIn"
                         onChange={(e) => enterTimeIn(e, cell, day)}
-                        defaultValue={timeIn[cell]}
+                        defaultValue={timeIn[cell] && moment(timeIn[cell]).format('LT')}
                         className="form-control"
                         type="text"
                         placeholder="Time In"
@@ -114,7 +115,7 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
                       <input
                         className="timeOut"
                         onChange={(e) => enterTimeOut(e, cell, day)}
-                        defaultValue={timeOut[cell]}
+                        defaultValue={timeOut[cell] && moment(timeOut[cell]).format('LT')}
                         className="form-control"
                         type="text"
                         placeholder="Time Out"
