@@ -5,10 +5,10 @@ import moment from "moment";
 const Grid = ({ allDaysOfMonth, prefillTime }) => {
   const [timeIn, setTimeIn] = useState({});
   const [timeOut, setTimeOut] = useState({});
-  //console.log(prefillTime)
 
   useEffect(() => {
-    //console.log(allDaysOfMonth)
+    resetTime(prefillTime);
+
     allDaysOfMonth.map((item, index) => {
       setTimeIn((state) => {
         return {
@@ -25,13 +25,20 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
       });
     });
   }, [prefillTime]);
-  console.log(timeIn);
+
+  const resetTime = (prefillTime) => {
+    const cellTimeIn = document.getElementsByClassName("timeIn");
+    const cellTimeOut = document.getElementsByClassName("timeOut");
+    for (let i = 0; i < cellTimeIn.length; i++) {
+      cellTimeOut[i].value = prefillTime.timeOut;
+      cellTimeIn[i].value = prefillTime.timeIn;
+    }
+  };
 
   const computeHours = (timeIn, timeOut, cell) => {
     let start = moment(timeIn[cell]);
     let end = moment(timeOut[cell]);
     let diff = end.diff(start);
-    console.log(diff)
     let computedHours = moment.utc(diff).format("H.mm");
 
     return computedHours;
@@ -47,14 +54,13 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
     });
 
     for (let i = 0; i < total.length; i++) {
-      console.log(total[i]);
       sum += total[i];
     }
 
     return sum;
   };
 
-  const enterTimeIn = (e, cell, day, preFillDates) => {
+  const enterTimeIn = (e, cell, day) => {
     setTimeIn((state) => {
       return {
         ...state,
@@ -101,10 +107,11 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
                   <td style={{ background: isWeekend(day) ? "grey" : "white" }}>
                     {!isWeekend(day) && (
                       <input
-                        className="timeIn"
                         onChange={(e) => enterTimeIn(e, cell, day)}
-                        defaultValue={timeIn[cell] && moment(timeIn[cell]).format('LT')}
-                        className="form-control"
+                        defaultValue={
+                          timeIn[cell] && moment(timeIn[cell]).format("LT")
+                        }
+                        className="form-control timeIn"
                         type="text"
                         placeholder="Time In"
                       />
@@ -113,10 +120,13 @@ const Grid = ({ allDaysOfMonth, prefillTime }) => {
                   <td style={{ background: isWeekend(day) ? "grey" : "white" }}>
                     {!isWeekend(day) && (
                       <input
-                        className="timeOut"
                         onChange={(e) => enterTimeOut(e, cell, day)}
-                        defaultValue={timeOut[cell] && moment(timeOut[cell]).format('LT')}
-                        className="form-control"
+                        defaultValue={
+                          (timeOut[cell] &&
+                            moment(timeOut[cell]).format("LT")) ||
+                          null
+                        }
+                        className="form-control timeOut"
                         type="text"
                         placeholder="Time Out"
                       />
